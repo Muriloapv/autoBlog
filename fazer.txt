@@ -1,0 +1,16 @@
+ - No mínimo duas classes de domínio com alguma cardinalidade de relacionamento entre elas (Ex: many to one, many to many,
+ one to many, one to one)
+ - Uma tela de listagem
+ - Uma tela de formulário (para adicionar elementos na tela de listagem)
+ - Uma tela de dashboard ou apresentação (home)
+ - Ter menu para navegação entre as telas
+ - CRUD com comunicação com backend (o backend pode ser fake e desenvolvido com json-server)
+ - No mínimo dois componentes
+ - Conter testes unitários
+
+
+
+
+Os códigos deverão ser adicionados em um repositório público (GitHub ou GitLab) e os links enviados pelo 
+Forms até dia 09 de novembro de 2024 .
+ 

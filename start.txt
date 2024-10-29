@@ -1,0 +1,7 @@
+Para iniciar a API: npm start
+
+Index:
+http://localhost:3000/
+
+Endpoints:
+http://localhost:3000/post
