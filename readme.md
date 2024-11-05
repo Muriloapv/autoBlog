@@ -10,7 +10,9 @@ Sendo um para Api e outro para o Flutter.
 flutter run
 
 Resolução utilizada para o desenvolvimento
+
 Iphone 12 Pro:         390 x 844
+
 Samsung S20 Ultra      412 x 915
 
 
