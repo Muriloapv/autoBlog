@@ -1,3 +1,4 @@
+// lib/screens/delete_post_screen.dart
 import 'package:flutter/material.dart';
 import '../models/post.dart';
 import '../services/api_service.dart';
@@ -8,9 +9,17 @@ class DeletePostScreen extends StatelessWidget {
   DeletePostScreen({required this.post});
 
   void _deletePost(BuildContext context) async {
-    await ApiService().deletePost(post.id);
-    Navigator.pop(
-        context, true); // Retorna true para indicar que o post foi deletado
+    try {
+      await ApiService().deletePost(post.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deletado com sucesso')),
+      );
+      Navigator.pop(context, true); // Indica sucesso na exclusão
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao deletar o post: $error')),
+      );
+    }
   }
 
   @override
@@ -36,8 +45,7 @@ class DeletePostScreen extends StatelessWidget {
                   child: Text('Sim'),
                 ),
                 ElevatedButton(
-                  onPressed: () =>
-                      Navigator.pop(context, false), // Volta sem deletar
+                  onPressed: () => Navigator.pop(context, false),
                   child: Text('Não'),
                 ),
               ],

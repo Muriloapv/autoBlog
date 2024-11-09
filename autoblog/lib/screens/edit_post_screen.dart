@@ -1,3 +1,4 @@
+// lib/screens/edit_post_screen.dart
 import 'package:flutter/material.dart';
 import '../models/post.dart';
 import '../services/api_service.dart';
@@ -33,7 +34,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
   }
 
   void _updatePost() async {
-    // Atualizar o post usando a API
     Post updatedPost = Post(
       id: widget.post.id,
       titulo: _tituloController.text,
@@ -42,8 +42,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
       dataDePostagem: widget.post.dataDePostagem,
     );
 
-    await ApiService().updatePost(updatedPost);
-    Navigator.pop(context, updatedPost);
+    try {
+      await ApiService().updatePost(updatedPost);
+      Navigator.pop(context, updatedPost); // Retorna o post atualizado
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao atualizar o post: $e')),
+      );
+    }
   }
 
   @override

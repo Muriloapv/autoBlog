@@ -11,14 +11,15 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    CreatePostScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _onPostCreated() {
+    setState(() {
+      _selectedIndex = 0; // Volta para a Home após criar o post
     });
   }
 
@@ -26,20 +27,25 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true, // Centraliza o título
+        centerTitle: true,
         title: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 16.0), // Adiciona padding vertical
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Text(
             'Autoblog',
             style: TextStyle(
-              fontSize: 32, // Tamanho da fonte para simular H1
-              fontWeight: FontWeight.bold, // Deixa o título em negrito
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
       ),
-      body: _screens[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          HomeScreen(),
+          CreatePostScreen(onPostCreated: _onPostCreated),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

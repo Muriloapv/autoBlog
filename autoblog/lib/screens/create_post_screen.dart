@@ -1,8 +1,14 @@
+// lib/screens/create_post_screen.dart
 import 'package:flutter/material.dart';
 import '../models/post.dart';
 import '../services/api_service.dart';
 
 class CreatePostScreen extends StatefulWidget {
+  final VoidCallback onPostCreated;
+
+  const CreatePostScreen({Key? key, required this.onPostCreated})
+      : super(key: key);
+
   @override
   _CreatePostScreenState createState() => _CreatePostScreenState();
 }
@@ -11,11 +17,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   final TextEditingController _imgController = TextEditingController();
-  final ApiService apiService = ApiService(); // Instância do serviço de API
+  final ApiService apiService = ApiService();
 
   void _createPost() async {
     final newPost = Post(
-      id: '', // O ID pode ser gerado automaticamente no backend
+      id: '',
       titulo: _tituloController.text,
       img: _imgController.text,
       descricao: _descricaoController.text,
@@ -24,9 +30,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     try {
       await apiService.createPost(newPost);
-      print('Novo post criado com sucesso');
-      Navigator.pop(
-          context, newPost); // Retorna o novo post para a tela anterior
+      widget
+          .onPostCreated(); // Chama o callback para atualizar a lista de posts
+      Navigator.pop(context); // Fecha a tela de criação de post
     } catch (e) {
       print('Erro ao criar post: $e');
       ScaffoldMessenger.of(context).showSnackBar(

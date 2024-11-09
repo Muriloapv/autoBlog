@@ -64,7 +64,13 @@ class ApiService {
   Future<void> deletePost(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      print("Post deletado com sucesso");
+    } else if (response.statusCode == 404) {
+      print("Erro 404: Post não encontrado");
+      throw Exception("Erro: Post não encontrado");
+    } else {
+      print('Erro ao deletar post: ${response.statusCode} - ${response.body}');
       throw Exception('Falha ao deletar o post');
     }
   }

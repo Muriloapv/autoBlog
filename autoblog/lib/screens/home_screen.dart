@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../models/post.dart';
 import '../services/api_service.dart';
 import '../widgets/post_card.dart';
-import 'create_post_screen.dart';
 import 'edit_post_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,46 +26,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _deletePost(String id) async {
-    try {
-      await apiService.deletePost(id);
-      _loadPosts(); // Recarrega a lista de posts
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Post deletado com sucesso.')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao deletar post.')),
-      );
-    }
-  }
-
-  void _confirmDelete(Post post) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Excluir Post'),
-        content: Text('Tem certeza que deseja excluir este post?'),
-        actions: [
-          TextButton(
-            child: Text('Cancelar'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          TextButton(
-            child: Text('Excluir'),
-            onPressed: () {
-              Navigator.pop(context); // Fecha o diálogo
-              _deletePost(post.id); // Deleta o post
-            },
-          ),
-        ],
+  void _navigateToEditPost(Post post) async {
+    final updatedPost = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPostScreen(post: post),
       ),
     );
+
+    if (updatedPost != null) {
+      _loadPosts(); // Recarrega os posts após edição
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Posts")),
       body: FutureBuilder<List<Post>>(
         future: futurePosts,
         builder: (context, snapshot) {
@@ -83,19 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 return PostCard(
                   post: posts[index],
-                  onEdit: () async {
-                    final updatedPost = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditPostScreen(post: posts[index]),
-                      ),
-                    );
-
-                    if (updatedPost != null) {
-                      _loadPosts(); // Recarrega os posts após edição
-                    }
-                  },
+                  onEdit: () => _navigateToEditPost(posts[index]),
                   onDelete: () => _confirmDelete(posts[index]),
                 );
               },
@@ -104,5 +68,42 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  void _confirmDelete(Post post) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Excluir Post'),
+        content: Text('Tem certeza que deseja excluir este post?'),
+        actions: [
+          TextButton(
+            child: Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text('Excluir'),
+            onPressed: () {
+              Navigator.pop(context);
+              _deletePost(post.id);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deletePost(String id) async {
+    try {
+      await apiService.deletePost(id);
+      _loadPosts();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deletado com sucesso.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao deletar post.')),
+      );
+    }
   }
 }
