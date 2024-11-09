@@ -17,19 +17,30 @@ class ApiService {
   }
 
   Future<void> createPost(Post post) async {
-    final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'Titulo': post.titulo,
-        'img': post.img,
-        'Descricao': post.descricao,
-        'Data de postagem': post.dataDePostagem,
-      }),
-    );
+    final url = Uri.parse(baseUrl);
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'Titulo': post.titulo,
+          'img': post.img,
+          'Descricao': post.descricao,
+          'Data de postagem': post.dataDePostagem,
+          // O ID é opcional aqui; remova se o servidor gera automaticamente
+          'id': post.id.isEmpty ? null : post.id,
+        }),
+      );
 
-    if (response.statusCode != 201) {
-      throw Exception('Falha ao criar o post');
+      if (response.statusCode == 201) {
+        print('Post criado com sucesso');
+      } else {
+        print('Falha ao criar o post. Código: ${response.statusCode}');
+        print('Resposta: ${response.body}');
+        throw Exception('Falha ao criar o post');
+      }
+    } catch (e) {
+      print('Erro ao tentar criar o post: $e');
     }
   }
 

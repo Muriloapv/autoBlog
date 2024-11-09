@@ -60,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadPosts(); // Recarrega os posts após edição
                     }
                   },
-                  child: PostCard(post: posts[index]),
                   onLongPress: () async {
                     // Navega para a tela de confirmação de deleção do post
                     final result = await Navigator.push(
@@ -75,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadPosts(); // Recarrega os posts após exclusão
                     }
                   },
+                  child: PostCard(post: posts[index]),
                 );
               },
             );

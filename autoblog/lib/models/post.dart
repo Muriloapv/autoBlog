@@ -1,4 +1,3 @@
-// lib/models/post.dart
 class Post {
   final String id;
   final String titulo;
@@ -16,10 +15,9 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      id: json['id'] ?? '', // Valor padrão vazio
+      id: json['id'] ?? '',
       titulo: json['Titulo'] ?? 'Título Indisponível',
-      img: json['img'] ??
-          'https://link-para-imagem-padrao.com/default.jpg', // Imagem padrão
+      img: json['img'] ?? '', // Deixe vazio por enquanto
       descricao: json['Descricao'] ?? 'Descrição não disponível',
       dataDePostagem: json['Data de postagem'] ?? 'Data não disponível',
     );
