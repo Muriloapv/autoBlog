@@ -1,17 +1,21 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_screen.dart'; // Certifique-se de ajustar o caminho para o arquivo criado
 
 void main() {
-  runApp(AutoblogApp());
+  runApp(MyApp());
 }
 
-class AutoblogApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Autoblog',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomeScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MainScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -5,7 +5,6 @@ import '../services/api_service.dart';
 import '../widgets/post_card.dart';
 import 'create_post_screen.dart';
 import 'edit_post_screen.dart';
-import 'delete_post_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Post>> futurePosts;
+  final ApiService apiService = ApiService();
 
   @override
   void initState() {
@@ -23,14 +23,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadPosts() {
     setState(() {
-      futurePosts = ApiService().fetchPosts();
+      futurePosts = apiService.fetchPosts();
     });
+  }
+
+  Future<void> _deletePost(String id) async {
+    try {
+      await apiService.deletePost(id);
+      _loadPosts(); // Recarrega a lista de posts
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deletado com sucesso.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao deletar post.')),
+      );
+    }
+  }
+
+  void _confirmDelete(Post post) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Excluir Post'),
+        content: Text('Tem certeza que deseja excluir este post?'),
+        actions: [
+          TextButton(
+            child: Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text('Excluir'),
+            onPressed: () {
+              Navigator.pop(context); // Fecha o diálogo
+              _deletePost(post.id); // Deleta o post
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Autoblog')),
       body: FutureBuilder<List<Post>>(
         future: futurePosts,
         builder: (context, snapshot) {
@@ -45,9 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
             return ListView.builder(
               itemCount: posts.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () async {
-                    // Navega para a tela de edição do post
+                return PostCard(
+                  post: posts[index],
+                  onEdit: () async {
                     final updatedPost = await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -60,40 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadPosts(); // Recarrega os posts após edição
                     }
                   },
-                  onLongPress: () async {
-                    // Navega para a tela de confirmação de deleção do post
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DeletePostScreen(post: posts[index]),
-                      ),
-                    );
-
-                    if (result == true) {
-                      _loadPosts(); // Recarrega os posts após exclusão
-                    }
-                  },
-                  child: PostCard(post: posts[index]),
+                  onDelete: () => _confirmDelete(posts[index]),
                 );
               },
             );
           }
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Navega para a tela de criação de post
-          final newPost = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreatePostScreen()),
-          );
-
-          if (newPost != null) {
-            _loadPosts(); // Recarrega os posts após criação
-          }
-        },
-        child: Icon(Icons.add),
       ),
     );
   }
